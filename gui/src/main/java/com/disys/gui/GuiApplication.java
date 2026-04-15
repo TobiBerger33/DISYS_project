@@ -9,7 +9,7 @@ public class GuiApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/disys/gui/main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/disys/community_producer/main.fxml"));
         Scene scene = new Scene(loader.load(), 800, 500);
         stage.setTitle("Energy Community Monitor");
         stage.setScene(scene);

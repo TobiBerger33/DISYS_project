@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="15" xmlns:fx="http://javafx.com/fxml" fx:controller="com.disys.gui.MainController">
+<VBox spacing="15" xmlns:fx="http://javafx.com/fxml" fx:controller="com.disys.community_user.MessagePublisher">
     <padding>
         <Insets top="15" right="15" bottom="15" left="15"/>
     </padding>
