@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="15" xmlns:fx="http://javafx.com/fxml" fx:controller="com.disys.gui.MainController">
+    <padding>
+        <Insets top="15" right="15" bottom="15" left="15"/>
+    </padding>
+
+    <!-- Current Percentage Section -->
+    <Label text="Current Energy Distribution" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Button text="Fetch Current" onAction="#onFetchCurrent"/>
+    </HBox>
+
+    <GridPane hgap="10" vgap="5">
+        <Label text="Hour:" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-weight: bold;"/>
+        <Label fx:id="currentHourLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Community Depleted:" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-weight: bold;"/>
+        <Label fx:id="communityDepletedLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Grid Portion:" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-weight: bold;"/>
+        <Label fx:id="gridPortionLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    </GridPane>
+
+    <Separator/>
+
+    <!-- Historical Data Section -->
+    <Label text="Historical Usage Data" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Start:"/>
+        <DatePicker fx:id="startDatePicker"/>
+        <Label text="End:"/>
+        <DatePicker fx:id="endDatePicker"/>
+        <Button text="Fetch Historical" onAction="#onFetchHistorical"/>
+    </HBox>
+
+    <TableView fx:id="historicalTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="hourColumn" text="Hour" prefWidth="180"/>
+            <TableColumn fx:id="producedColumn" text="Community Produced (kWh)" prefWidth="180"/>
+            <TableColumn fx:id="usedColumn" text="Community Used (kWh)" prefWidth="160"/>
+            <TableColumn fx:id="gridColumn" text="Grid Used (kWh)" prefWidth="140"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="statusLabel" text="Ready." style="-fx-text-fill: gray;"/>
+</VBox>
