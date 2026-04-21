@@ -1,6 +1,5 @@
 package com.disys.gui;
 
-import com.disys.restapi.RestApiApplication;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -15,13 +14,5 @@ public class GuiApplication extends Application {
         stage.setTitle("Energy Community Monitor");
         stage.setScene(scene);
         stage.show();
-    }
-
-    public static class Launcher {
-        public static void main(String[] args) {
-            new Thread(() -> RestApiApplication.main(args)).start();
-
-            Application.launch(GuiApplication.class, args);
-        }
     }
 }
