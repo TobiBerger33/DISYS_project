@@ -1,0 +1,1 @@
+ALTER TABLE "usage-data" RENAME TO usage_data;
