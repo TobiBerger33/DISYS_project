@@ -5,8 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.disys</groupId>
-    <artifactId>gui</artifactId>
+    <artifactId>usage-service</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.4.1</version>
+        <relativePath/>
+    </parent>
 
     <properties>
         <java.version>21</java.version>
@@ -37,6 +44,16 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.18.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.7</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -48,6 +65,10 @@
                 <configuration>
                     <mainClass>com.disys.community_producer.PercentageServiceApp</mainClass>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
