@@ -1,21 +1,18 @@
 package com.disys.community_producer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
+import com.disys.shared.EnergyMessage;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MessagePublisher {
+    private final RabbitTemplate rabbitTemplate;
 
-    public static final String QUEUE = "energy.community";
+    public MessagePublisher(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
-    private final Channel channel;
-    private final Connection connection;
-    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
-
-    public MessagePublisher() {
-       channel = new oke
-
+    public void publish(EnergyMessage message) {
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_KEY, message);
     }
 }
