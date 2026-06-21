@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.energycommunity.javafxgui.HelloController"
+            stylesheets="@styles.css">
+
+  <!-- LEFT SIDEBAR -->
+  <left>
+    <VBox styleClass="sidebar" minWidth="200">
+      <padding><Insets top="32" right="20" bottom="32" left="20"/></padding>
+      <Label text="⚡" styleClass="sidebar-icon"/>
+      <Label text="Energy" styleClass="sidebar-title"/>
+      <Label text="Community" styleClass="sidebar-title"/>
+      <Label text="Monitor" styleClass="sidebar-subtitle"/>
+    </VBox>
+  </left>
+
+  <!-- MAIN CONTENT -->
+  <center>
+    <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+      <VBox spacing="20" styleClass="content-area">
+        <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+        <!-- CURRENT STATUS CARD -->
+        <VBox styleClass="card" spacing="16">
+          <Label text="Current Status" styleClass="card-title"/>
+          <Separator/>
+          <GridPane hgap="16" vgap="12">
+            <Label text="Community Pool" styleClass="data-label"
+                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <Label fx:id="communityPoolLabel" text="—" styleClass="data-value"
+                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <Label text="Grid Portion" styleClass="data-label"
+                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <Label fx:id="gridPortionLabel" text="—" styleClass="data-value"
+                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+          </GridPane>
+          <Button text="↻  Refresh" onAction="#handleRefresh" styleClass="btn-primary"/>
+          <Label fx:id="currentErrorLabel" text="" styleClass="error-label"/>
+        </VBox>
+
+        <!-- HISTORICAL DATA CARD -->
+        <VBox styleClass="card" spacing="16">
+          <Label text="Historical Data" styleClass="card-title"/>
+          <Separator/>
+          <GridPane hgap="16" vgap="12">
+            <Label text="Start" styleClass="data-label"
+                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="startPicker"
+                        GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <Label text="End" styleClass="data-label"
+                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="endPicker"
+                        GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+          </GridPane>
+          <Button text="⟳  Show Data" onAction="#handleShowData" styleClass="btn-secondary"/>
+          <Label fx:id="histErrorLabel" text="" styleClass="error-label"/>
+          <Separator/>
+          <GridPane hgap="16" vgap="12">
+            <Label text="Community produced" styleClass="data-label"
+                   GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <Label fx:id="producedLabel" text="—" styleClass="data-value-green"
+                   GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <Label text="Community used" styleClass="data-label"
+                   GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <Label fx:id="usedLabel" text="—" styleClass="data-value-green"
+                   GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+            <Label text="Grid used" styleClass="data-label"
+                   GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <Label fx:id="gridUsedLabel" text="—" styleClass="data-value-green"
+                   GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+          </GridPane>
+        </VBox>
+
+      </VBox>
+    </ScrollPane>
+  </center>
+
+</BorderPane>
