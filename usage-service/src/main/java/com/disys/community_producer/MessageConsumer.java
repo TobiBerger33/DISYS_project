@@ -1,6 +1,7 @@
 package com.disys.community_producer;
 
 import com.disys.shared.EnergyMessage;
+import com.disys.shared.UsageUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -29,20 +30,24 @@ public class MessageConsumer {
     @RabbitListener(queues = RabbitMQConfig.ENERGY_QUEUE)
     public void handleEnergyMessage(EnergyMessage message) {
         log.info("Message empfangen: type={}, kwh={}, datetime={}",
-                 message.getType(), message.getKwh(), message.getDatetime());
+                message.getType(), message.getKwh(), message.getDatetime());
 
         try {
             UsageData updated = usageCalculator.processMessage(message);
 
             log.info("DB aktualisiert für Stunde {}: produced={}, used={}, grid={}",
-                     updated.getHour(), updated.getCommunityProduced(),
-                     updated.getCommunityUsed(), updated.getGridUsed());
+                    updated.getHour(), updated.getCommunityProduced(),
+                    updated.getCommunityUsed(), updated.getGridUsed());
 
             // Notification an Percentage-Service schicken
             // Wir schicken die Stunde als String, damit der Percentage-Service
             // weiß welche Stunde neu berechnet werden muss
             String hourStr = updated.getHour().toString();
-            rabbitTemplate.convertAndSend(RabbitMQConfig.UPDATES_QUEUE, hourStr);
+            UsageUpdate usageUpdate = new UsageUpdate(updated.getHour(),
+                    updated.getCommunityProduced(),
+                    updated.getCommunityUsed(),
+                    updated.getGridUsed());
+            rabbitTemplate.convertAndSend(RabbitMQConfig.UPDATES_QUEUE, usageUpdate);
             log.info("Update-Notification geschickt für Stunde: {}", hourStr);
 
         } catch (Exception e) {
