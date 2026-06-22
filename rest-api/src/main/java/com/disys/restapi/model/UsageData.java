@@ -4,6 +4,11 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Read-side view of the "usage_data" table that the usage-service writes.
+ * Same columns as the usage-service's UsageData entity; the rest-api only reads
+ * it to serve /energy/historical.
+ */
 @Entity
 @Table(name = "usage_data")
 public class UsageData {

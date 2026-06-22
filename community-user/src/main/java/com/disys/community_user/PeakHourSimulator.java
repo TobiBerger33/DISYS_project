@@ -4,11 +4,20 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 
+/**
+ * Produces a realistic consumption value (kWh) for a single USER message.
+ * Real households use more energy at certain times, so the base value is scaled
+ * by a time-of-day multiplier (morning/evening peaks, low at night).
+ */
 @Service
 public class PeakHourSimulator {
 
+    // Average consumption per message at a "normal" hour, before scaling.
     private static final double BASE_KWH = 0.3;
 
+    /**
+     * @return how much to scale BASE_KWH by, based on the current local hour
+     */
     public double getMultiplier() {
         int hour = LocalTime.now().getHour();
 
@@ -25,10 +34,16 @@ public class PeakHourSimulator {
         }
     }
 
+    /**
+     * @return consumption in kWh for one message: base * time-of-day * noise,
+     *         rounded to 4 decimal places
+     */
     public double calculateKwh() {
         double multiplier = getMultiplier();
+        // +/-10% random variation so consecutive readings aren't identical.
         double variation = 0.9 + (Math.random() * 0.2);
         double kwh = BASE_KWH * multiplier * variation;
+        // Round to 4 decimals to keep the kWh value tidy.
         return Math.round(kwh * 10000.0) / 10000.0;
     }
 }

@@ -8,12 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 /**
- * Business-Logik für die Berechnung der Usage-Daten.
+ * Business logic for aggregating the usage data.
  *
- * Regel laut Spec:
- *   community_used kann NIEMALS größer sein als community_produced.
- *   Wenn ein User mehr verbraucht als die Community produziert hat,
- *   geht der Überschuss in grid_used.
+ * Rule from the spec:
+ *   community_used can NEVER exceed community_produced.
+ *   If a user consumes more than the community has produced,
+ *   the surplus goes into grid_used (energy bought from the public grid).
  */
 @Service
 public class UsageCalculator {
@@ -24,23 +24,30 @@ public class UsageCalculator {
         this.usageRepository = usageRepository;
     }
 
+    /**
+     * Applies one incoming energy event to the hourly totals and saves them.
+     * Runs in a transaction so the read-modify-write stays consistent.
+     */
     @Transactional
     public UsageData processMessage(EnergyMessage message) {
-        // Stunde aus dem datetime ableiten (Minuten/Sekunden auf 0 setzen)
+        // Derive the hour bucket from the timestamp (zero out minutes/seconds/nanos).
         LocalDateTime hour = message.getDatetime().withMinute(0).withSecond(0).withNano(0);
 
-        // Bestehenden Eintrag für diese Stunde suchen, oder neuen anlegen
+        // Load the existing row for that hour, or start a fresh (all-zero) one.
         UsageData row = usageRepository.findByHour(hour)
                 .orElse(new UsageData(hour));
 
         if (message.getType() == MessageType.PRODUCER) {
-            // Producer: einfach kWh zur community_produced addieren
+            // Producer: simply add the kWh to community_produced.
             row.setCommunityProduced(row.getCommunityProduced() + message.getKwh());
 
         } else if (message.getType() == MessageType.USER) {
-            // User: zuerst aus dem Community-Pool nehmen
+            // User: cover the demand from the community pool first.
+            // available = how much produced energy hasn't been consumed yet.
             double available = row.getCommunityProduced() - row.getCommunityUsed();
+            // Take as much as possible from the community, but never more than is available.
             double fromCommunity = Math.min(message.getKwh(), available);
+            // Whatever is left over must come from the public grid.
             double fromGrid = message.getKwh() - fromCommunity;
 
             row.setCommunityUsed(row.getCommunityUsed() + fromCommunity);
