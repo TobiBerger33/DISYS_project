@@ -21,5 +21,6 @@
     <modules>
         <module>rest-api</module>
         <module>gui</module>
+        <module>usage-service</module>
     </modules>
 </project>
