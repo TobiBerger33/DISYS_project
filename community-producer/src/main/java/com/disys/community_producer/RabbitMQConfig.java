@@ -1,5 +1,8 @@
 package com.disys.community_producer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -13,9 +16,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String QUEUE = "energy.community";
-    public static final String EXCHANGE = "energy.exchange";
-    public static final String ROUTING_KEY = QUEUE;
+    public static final String QUEUE = "energy.queue";
 
     @Bean
     public Queue energyQueue() {
@@ -23,19 +24,10 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public DirectExchange energyExchange() {
-        return new DirectExchange(EXCHANGE);
-    }
-
-    @Bean
-    public Binding energyBinding() {
-        return BindingBuilder.bind(energyQueue()).to(energyExchange()).with(ROUTING_KEY);
-    }
-
-    @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate template = new RabbitTemplate(connectionFactory);
-        template.setMessageConverter(new Jackson2JsonMessageConverter());
-        return template;
+    public Jackson2JsonMessageConverter messageConverter() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return new Jackson2JsonMessageConverter(mapper);
     }
 }

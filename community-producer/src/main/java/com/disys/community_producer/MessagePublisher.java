@@ -13,6 +13,6 @@ public class MessagePublisher {
     }
 
     public void publish(EnergyMessage message) {
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_KEY, message);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.QUEUE, message);
     }
 }
