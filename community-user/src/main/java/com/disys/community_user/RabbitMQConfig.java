@@ -1,4 +1,4 @@
-package com.disys.community_producer;
+package com.disys.community_user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -9,30 +9,25 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * RabbitMQ setup for the usage-service. It both consumes (energy.queue) and
- * produces (energy.updates), so it declares both queues plus the JSON converter.
+ * RabbitMQ setup for the user service: declares the queue it publishes to and
+ * configures JSON (de)serialization, matching the producer's config so both
+ * sides speak the same wire format.
  */
 @Configuration
 public class RabbitMQConfig {
 
-    // Queue that producer and user send their messages to (this service consumes it).
-    public static final String ENERGY_QUEUE = "energy.queue";
-
-    // Queue this service publishes notifications to (consumed by the percentage-service).
-    public static final String UPDATES_QUEUE = "energy.updates";
+    // Same queue the producer uses; the usage-service consumes from it.
+    public static final String QUEUE = "energy.queue";
 
     @Bean
     public Queue energyQueue() {
         // durable=true: the queue survives a RabbitMQ restart.
-        return new Queue(ENERGY_QUEUE, true);
+        return new Queue(QUEUE, true);
     }
 
-    @Bean
-    public Queue updatesQueue() {
-        return new Queue(UPDATES_QUEUE, true);
-    }
-
-    // Makes objects travel as JSON automatically (and dates as ISO text).
+    /**
+     * Sends/receives message bodies as JSON and writes LocalDateTime as ISO text.
+     */
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
         ObjectMapper mapper = new ObjectMapper();

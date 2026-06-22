@@ -1,6 +1,7 @@
 package com.disys.community_producer;
 
 import com.disys.shared.EnergyMessage;
+import com.disys.shared.UsageUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -8,9 +9,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * Hört auf die energy.queue und verarbeitet eingehende PRODUCER/USER Messages.
- * Nach jeder Verarbeitung wird eine Notification auf energy.updates geschickt,
- * damit der Percentage-Service reagieren kann.
+ * Listens on energy.queue and processes incoming PRODUCER/USER messages.
+ * After each message is processed, a notification is published to energy.updates
+ * so the percentage-service can react.
  */
 @Component
 public class MessageConsumer {
@@ -25,28 +26,33 @@ public class MessageConsumer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    // @RabbitListener sagt Spring: "Ruf diese Methode auf, wenn eine Message auf energy.queue ankommt"
+    // @RabbitListener tells Spring: "call this method whenever a message arrives on energy.queue".
     @RabbitListener(queues = RabbitMQConfig.ENERGY_QUEUE)
     public void handleEnergyMessage(EnergyMessage message) {
-        log.info("Message empfangen: type={}, kwh={}, datetime={}",
-                 message.getType(), message.getKwh(), message.getDatetime());
+        log.info("Message received: type={}, kwh={}, datetime={}",
+                message.getType(), message.getKwh(), message.getDatetime());
 
         try {
+            // Fold this event into the running hourly totals (and persist them).
             UsageData updated = usageCalculator.processMessage(message);
 
-            log.info("DB aktualisiert für Stunde {}: produced={}, used={}, grid={}",
-                     updated.getHour(), updated.getCommunityProduced(),
-                     updated.getCommunityUsed(), updated.getGridUsed());
+            log.info("DB updated for hour {}: produced={}, used={}, grid={}",
+                    updated.getHour(), updated.getCommunityProduced(),
+                    updated.getCommunityUsed(), updated.getGridUsed());
 
-            // Notification an Percentage-Service schicken
-            // Wir schicken die Stunde als String, damit der Percentage-Service
-            // weiß welche Stunde neu berechnet werden muss
+            // Notify the percentage-service. We forward the fresh hourly totals so
+            // it can recompute the percentages for exactly this hour.
             String hourStr = updated.getHour().toString();
-            rabbitTemplate.convertAndSend(RabbitMQConfig.UPDATES_QUEUE, hourStr);
-            log.info("Update-Notification geschickt für Stunde: {}", hourStr);
+            UsageUpdate usageUpdate = new UsageUpdate(updated.getHour(),
+                    updated.getCommunityProduced(),
+                    updated.getCommunityUsed(),
+                    updated.getGridUsed());
+            rabbitTemplate.convertAndSend(RabbitMQConfig.UPDATES_QUEUE, usageUpdate);
+            log.info("Update notification sent for hour: {}", hourStr);
 
         } catch (Exception e) {
-            log.error("Fehler beim Verarbeiten der Message: {}", e.getMessage(), e);
+            // Log and swallow: a single bad message must not stop the listener.
+            log.error("Error while processing message: {}", e.getMessage(), e);
         }
     }
 }

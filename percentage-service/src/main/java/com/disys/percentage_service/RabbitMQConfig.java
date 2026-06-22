@@ -1,4 +1,4 @@
-package com.disys.community_producer;
+package com.disys.percentage_service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -9,36 +9,28 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * RabbitMQ setup for the usage-service. It both consumes (energy.queue) and
- * produces (energy.updates), so it declares both queues plus the JSON converter.
+ * RabbitMQ setup for the percentage-service: declares the queue it consumes and
+ * configures the JSON converter (matching the usage-service that publishes here).
  */
 @Configuration
 public class RabbitMQConfig {
 
-    // Queue that producer and user send their messages to (this service consumes it).
-    public static final String ENERGY_QUEUE = "energy.queue";
-
-    // Queue this service publishes notifications to (consumed by the percentage-service).
-    public static final String UPDATES_QUEUE = "energy.updates";
+    // Queue the usage-service publishes hourly updates to; this service consumes it.
+    public static final String UPDATE_QUEUE = "energy.updates";
 
     @Bean
-    public Queue energyQueue() {
+    public Queue updateQueue() {
         // durable=true: the queue survives a RabbitMQ restart.
-        return new Queue(ENERGY_QUEUE, true);
+        return new Queue(UPDATE_QUEUE, true);
     }
 
-    @Bean
-    public Queue updatesQueue() {
-        return new Queue(UPDATES_QUEUE, true);
-    }
-
-    // Makes objects travel as JSON automatically (and dates as ISO text).
+    /** Receives message bodies as JSON and reads LocalDateTime from ISO text. */
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
         ObjectMapper mapper = new ObjectMapper();
         // JavaTimeModule teaches Jackson how to handle java.time types (LocalDateTime).
         mapper.registerModule(new JavaTimeModule());
-        // Write dates as "2025-01-10T14:00:00" instead of an epoch timestamp.
+        // Match the producer side: dates as ISO text, not epoch timestamps.
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return new Jackson2JsonMessageConverter(mapper);
     }

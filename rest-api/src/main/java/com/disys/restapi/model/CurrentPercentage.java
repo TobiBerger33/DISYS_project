@@ -4,6 +4,11 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Read-side view of the "percentage" table that the percentage-service writes.
+ * Same columns as the percentage-service's Percentage entity; the rest-api only
+ * reads it to serve /energy/current.
+ */
 @Entity
 @Table(name = "percentage")
 public class CurrentPercentage {

@@ -4,55 +4,33 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.disys</groupId>
-    <artifactId>usage-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1</version>
-        <relativePath/>
+        <groupId>com.disys</groupId>
+        <artifactId>disys-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <artifactId>usage-service</artifactId>
+
+
 
     <dependencies>
-        <!-- Shared DTOs (EnergyMessage, MessageType) -->
         <dependency>
             <groupId>com.disys</groupId>
             <artifactId>shared</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!-- RabbitMQ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
-        <!-- JPA für Datenbankzugriff -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <!-- Jackson für JSON-Serialisierung (wird von Jackson2JsonMessageConverter benötigt) -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <!-- PostgreSQL Treiber -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.7</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
