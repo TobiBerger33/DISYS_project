@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class EnergyMessage {
 
     private MessageType type;
+    private String association;
     private double kwh;
     private LocalDateTime datetime;
 
@@ -17,12 +18,27 @@ public class EnergyMessage {
         this.datetime = datetime;
     }
 
+    public EnergyMessage(MessageType type, String association, double kwh, LocalDateTime datetime) {
+        this.type = type;
+        this.association = association;
+        this.kwh = kwh;
+        this.datetime = datetime;
+    }
+
     public MessageType getType() {
         return type;
     }
 
     public void setType(MessageType type) {
         this.type = type;
+    }
+
+    public String getAssociation() {
+        return association;
+    }
+
+    public void setAssociation(String association) {
+        this.association = association;
     }
 
     public double getKwh() {

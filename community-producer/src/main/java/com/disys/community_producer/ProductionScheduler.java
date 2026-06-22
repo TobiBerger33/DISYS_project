@@ -27,7 +27,7 @@ public class ProductionScheduler {
     private void produceAndSend() throws IOException, InterruptedException {
         double sunFactor = weather.getSunFactor();
         double kwh = calculator.calculate(sunFactor);
-        EnergyMessage msg = new EnergyMessage(MessageType.PRODUCER, kwh, LocalDateTime.now());
+        EnergyMessage msg = new EnergyMessage(MessageType.PRODUCER, "COMMUNITY", kwh, LocalDateTime.now());
         publisher.publish(msg);
         System.out.println("Gesendet: " + kwh + " kWh (sunFactor " + sunFactor + ")");
     }

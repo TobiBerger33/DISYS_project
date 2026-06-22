@@ -1,5 +1,7 @@
 package com.disys.community_producer;
 
+import com.disys.shared.EnergyMessage;
+import com.disys.shared.MessageType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +33,11 @@ public class UsageCalculator {
         UsageData row = usageRepository.findByHour(hour)
                 .orElse(new UsageData(hour));
 
-        if ("PRODUCER".equals(message.getType())) {
+        if (message.getType() == MessageType.PRODUCER) {
             // Producer: einfach kWh zur community_produced addieren
             row.setCommunityProduced(row.getCommunityProduced() + message.getKwh());
 
-        } else if ("USER".equals(message.getType())) {
+        } else if (message.getType() == MessageType.USER) {
             // User: zuerst aus dem Community-Pool nehmen
             double available = row.getCommunityProduced() - row.getCommunityUsed();
             double fromCommunity = Math.min(message.getKwh(), available);
