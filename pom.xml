@@ -36,6 +36,7 @@
     <modules>
         <module>shared</module>
         <module>community-producer</module>
+        <module>community-user</module>
         <module>rest-api</module>
         <module>gui</module>
         <module>usage-service</module>

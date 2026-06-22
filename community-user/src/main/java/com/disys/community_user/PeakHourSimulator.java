@@ -7,7 +7,7 @@ import java.time.LocalTime;
 @Service
 public class PeakHourSimulator {
 
-    private static final double BASE_KWH = 0.002;
+    private static final double BASE_KWH = 0.3;
 
     public double getMultiplier() {
         int hour = LocalTime.now().getHour();
