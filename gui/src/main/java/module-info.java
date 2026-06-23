@@ -12,4 +12,7 @@ module com.energycommunity.javafxgui {
     // Let JavaFX reflectively access the controllers/fields in this package to inject @FXML fields.
     opens com.energycommunity.javafxgui to javafx.fxml;
     exports com.energycommunity.javafxgui;
+
+    opens com.disys.gui to javafx.graphics, javafx.fxml;
+    exports com.disys.gui;
 }
